@@ -40,11 +40,18 @@ function printReceipt(data) {
 
 const express = require("express");
 const bodyParser = require("body-parser");
+const cors = require("cors");
 const app = express();
+
+const corsOptions = {
+    origin: ["http://localhost:8000"],
+};
+
 app.use(bodyParser.json());
+app.use(cors(corsOptions));
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.post("/print-receipt", (req, res) => {
+app.post("/print-receipt", cors(corsOptions), (req, res) => {
     printReceipt(req.body);
 
     res.sendStatus(204);
