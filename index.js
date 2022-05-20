@@ -44,7 +44,7 @@ const cors = require("cors");
 const app = express();
 
 const corsOptions = {
-    origin: ["http://localhost:8000"],
+    origin: ["http://localhost:8080", "http://localhost:8000"],
 };
 
 app.use(bodyParser.json());
