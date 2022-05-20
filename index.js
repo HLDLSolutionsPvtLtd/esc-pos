@@ -2,7 +2,7 @@ const escpos = require("escpos");
 // install escpos-usb adapter module manually
 escpos.USB = require("escpos-usb");
 
-function printReceipt() {
+function printReceipt(data) {
     // Select the adapter based on your printer type
     const device = new escpos.USB();
     // const device  = new escpos.Network('localhost');
@@ -44,8 +44,8 @@ const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.get("/print-receipt", (req, res) => {
-    printReceipt();
+app.post("/print-receipt", (req, res) => {
+    printReceipt(req.body);
 
     res.sendStatus(204);
 });
