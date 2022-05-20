@@ -17,8 +17,8 @@ device.open(function () {
     .align("ct")
     .style("bu")
     .size(1, 1)
-    .text("The quick brown fox jumps over the lazy dog")
-    .text("敏捷的棕色狐狸跳过懒狗")
+    .text("Rinawma Hmelchhe ber e")
+    .text("Hmelchhe bawk, zu heh bawk")
     .barcode("1234567", "EAN8")
     .table(["One", "Two", "Three"])
     .tableCustom(
