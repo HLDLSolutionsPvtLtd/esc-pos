@@ -59,7 +59,7 @@ function printReceipt(data) {
                printer.tableCustom(
                     [
                     { text: element.inventory.item.name, align:"LEFT", width:0.5},
-                    { text: element.pivot.quantity+ "x" +"Rs. "+element.inventory.selling_price, align:"RIGHT", width:0.5},
+                    { text: element.pivot.quantity+ " x " +"Rs. "+parseFloat(element.inventory.selling_price).toFixed(2), align:"RIGHT", width:0.5},
                     ],
               );
            })
@@ -67,7 +67,7 @@ function printReceipt(data) {
            printer.tableCustom(
                 [
                     { text: "SUB TOTAL", align:"LEFT", width:0.5},
-                    { text: "Rs. "+data.total_without_gst, align:"RIGHT", width:0.5},
+                    { text: "Rs. "+parseFloat(data.total_without_gst).toFixed(2), align:"RIGHT", width:0.5},
                 ],
             );
             printer.tableCustom(
@@ -79,7 +79,7 @@ function printReceipt(data) {
             printer.tableCustom(
                 [
                     { text: "TOTAL PAYABLE", align:"LEFT", width:0.5},
-                    { text: "Rs. "+data.total_with_gst, align:"RIGHT", width:0.5},
+                    { text: "Rs. "+ parseFloat(data.total_with_gst).toFixed(2), align:"RIGHT", width:0.5},
                 ],
             );
             
