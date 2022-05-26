@@ -4,7 +4,38 @@ const escpos = require("escpos");
 // install escpos-usb adapter module manually
 escpos.USB = require("escpos-usb");
 
-function printReceipt(data) {
+function printReceipt(req) {
+
+  let data = req.data;
+  let taxGroup = [];
+
+  data.products.forEach(element => {
+    insert(element);
+  });
+
+  function insert(el)
+  {
+    let index = taxGroup.findIndex( gr => {
+        if(el.inventory.gst_percent == gr.percent)
+        {
+          return true
+        }
+    })
+
+    if(taxGroup[index])
+    {
+      taxGroup[index].total = parseFloat(((Number(el.inventory.selling_price) * Number(el.inventory.gst_percent))/100)) + parseFloat(taxGroup[index].total)
+    }
+    else
+    {
+      taxGroup.push({
+        percent: el.inventory.gst_percent,
+        total: parseFloat(((Number(el.inventory.selling_price) * Number(el.inventory.gst_percent))/100))
+      })
+    }
+
+
+  }
     // Select the adapter based on your printer type
     const device = new escpos.USB();
     // const device  = new escpos.Network('localhost');
@@ -33,7 +64,7 @@ function printReceipt(data) {
             .style("")
             .size(0, 0)
             .tableCustom([
-                { text: "Famcart", align: "LEFT", width: 0.5 },
+                { text: "FamCart", align: "LEFT", width: 0.5 },
                 {
                     text: format(parseISO(data.created_at), "hh:mm aaa"),
                     align: "RIGHT",
@@ -51,8 +82,13 @@ function printReceipt(data) {
 
             .tableCustom([
                 { text: "Contact: 343463", align: "LEFT", width: 0.5 },
-                { text: "Employee ID: EMP-1", align: "RIGHT", width: 0.5 },
-            ]);
+                { text: "Employee ID: "+req.emp_id, align: "RIGHT", width: 0.5 },
+            ])
+
+            .tableCustom([
+              { text: "Customer Contact: "+data.customer.phone_no, align: "LEFT", width: 0.5 },
+              { text: "Store Name: "+data.store.name, align: "RIGHT", width: 0.5 },
+          ]);
 
         printer.drawLine();
         printer.tableCustom([
@@ -77,6 +113,26 @@ function printReceipt(data) {
                         " x " +
                         "Rs. " +
                         parseFloat(element.inventory.selling_price).toFixed(2),
+                    align: "RIGHT",
+                    width: 0.5,
+                },
+            ]);
+        });
+        printer.drawLine();
+        printer.tableCustom([
+            { text: "TAX BREAKDOWN", align: "LEFT", width: 0.5 },
+            { text: "AMOUNT", align: "RIGHT", width: 0.5 },
+        ]);
+        taxGroup.forEach((element) => {
+            printer.tableCustom([
+                {
+                    text: element.percent+"%",
+                    align: "LEFT",
+                    width: 0.5,
+                },
+                {
+                    text:"Rs. " +
+                        parseFloat(element.total).toFixed(2),
                     align: "RIGHT",
                     width: 0.5,
                 },
