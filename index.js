@@ -21,21 +21,49 @@ function printReceipt(req) {
 
         if (el.inventory.gst_percent != 0) {
             if (taxGroup[index]) {
-                taxGroup[index].total =
-                    parseFloat(
-                        (Number(el.inventory.selling_price) *
-                            Number(el.inventory.gst_percent)) /
-                            100
-                    ) + parseFloat(taxGroup[index].total);
+                if (el.pivot.discount_amount != "") {
+                    taxGroup[index].total =
+                        (parseFloat(
+                            ((Number(el.inventory.selling_price) -
+                                Number(el.pivot.discount_amount)) *
+                                Number(el.inventory.gst_percent)) /
+                                100
+                        ) +
+                            parseFloat(taxGroup[index].total)) *
+                        parseFloat(el.pivot.quantity);
+                } else {
+                    taxGroup[index].total =
+                        (parseFloat(
+                            (Number(el.inventory.selling_price) *
+                                Number(el.inventory.gst_percent)) /
+                                100
+                        ) +
+                            parseFloat(taxGroup[index].total)) *
+                        parseFloat(el.pivot.quantity);
+                }
             } else {
-                taxGroup.push({
-                    percent: el.inventory.gst_percent,
-                    total: parseFloat(
-                        (Number(el.inventory.selling_price) *
-                            Number(el.inventory.gst_percent)) /
-                            100
-                    ),
-                });
+                if (el.pivot.discount_amount != "") {
+                    taxGroup.push({
+                        percent: el.inventory.gst_percent,
+                        total:
+                            parseFloat(
+                                ((Number(el.inventory.selling_price) -
+                                    Number(el.pivot.discount_amount)) *
+                                    Number(el.inventory.gst_percent)) /
+                                    100
+                            ) * parseFloat(el.pivot.quantity),
+                    });
+                } else {
+                    taxGroup.push({
+                        percent: el.inventory.gst_percent,
+                        total:
+                            parseFloat(
+                                (Number(el.inventory.selling_price) *
+                                    Number(el.inventory.gst_percent)) /
+                                    100
+                            ) * parseFloat(el.pivot.quantity),
+                    });
+                }
             }
         }
     }
@@ -104,7 +132,7 @@ function printReceipt(req) {
             ])
 
             .tableCustom([
-                { text: "Contact: 343463", align: "LEFT", width: 0.5 },
+                { text: "Contact: 9366786215", align: "LEFT", width: 0.5 },
                 {
                     text: "Employee ID: " + req.emp_id,
                     align: "RIGHT",
