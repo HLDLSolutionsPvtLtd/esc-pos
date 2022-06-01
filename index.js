@@ -113,7 +113,10 @@ function printReceipt(req) {
             .tableCustom([
                 { text: "FamCart", align: "LEFT", width: 0.5 },
                 {
-                    text: format(parseISO(data.created_at), "hh:mm aaa"),
+                    text: format(
+                        parseISO(data.created_at),
+                        "dd-MM-Y hh:mm aaa"
+                    ),
                     align: "RIGHT",
                     width: 0.5,
                 },
@@ -125,16 +128,20 @@ function printReceipt(req) {
                     width: 0.5,
                 },
                 {
-                    text: format(parseISO(data.created_at), "dd-MM-Y"),
+                    text: "Employee ID: " + req.emp_id,
                     align: "RIGHT",
                     width: 0.5,
                 },
             ])
 
             .tableCustom([
-                { text: "Contact: 9366786215", align: "LEFT", width: 0.5 },
                 {
-                    text: "Employee ID: " + req.emp_id,
+                    text: "Store Contact: 9366786215",
+                    align: "LEFT",
+                    width: 0.5,
+                },
+                {
+                    text: "Store Name: " + data.store.name,
                     align: "RIGHT",
                     width: 0.5,
                 },
@@ -147,7 +154,7 @@ function printReceipt(req) {
                     width: 0.5,
                 },
                 {
-                    text: "Store Name: " + data.store.name,
+                    text: "GSTIN/UIN: " + "1234ASDAKLJK",
                     align: "RIGHT",
                     width: 0.5,
                 },
@@ -155,8 +162,10 @@ function printReceipt(req) {
 
         printer.drawLine();
         printer.tableCustom([
-            { text: "ITEM", align: "LEFT", width: 0.5 },
-            { text: "PRICE", align: "RIGHT", width: 0.5 },
+            { text: "ITEM", align: "LEFT", width: 0.25 },
+            { text: "QTY", align: "LEFT", width: 0.25 },
+            { text: "PRICE", align: "LEFT", width: 0.25 },
+            { text: "NETVALUE", align: "RIGHT", width: 0.25 },
         ]);
         data.products.forEach((element) => {
             let sellingPrice = parseFloat(
@@ -167,27 +176,31 @@ function printReceipt(req) {
                 {
                     text: element.inventory.item.name,
                     align: "LEFT",
-                    width: 0.5,
+                    width: 0.25,
                 },
                 {
-                    text:
-                        element.pivot.quantity +
-                        " " +
-                        element.inventory.item.unit_measurement
-                            .charAt(0)
-                            .toUpperCase() +
-                        element.inventory.item.unit_measurement.slice(1) +
-                        " x " +
-                        "Rs. " +
-                        sellingPrice,
+                    text: `${element.pivot.quantity} ${element.inventory.item.unit_measurement}`,
+                    align: "LEFT",
+                    width: 0.25,
+                },
+                {
+                    text: sellingPrice,
+                    align: "LEFT",
+                    width: 0.25,
+                },
+                {
+                    text: `Rs. ${
+                        parseFloat(sellingPrice) *
+                        parseFloat(element.pivot.quantity)
+                    }`,
                     align: "RIGHT",
-                    width: 0.5,
+                    width: 0.25,
                 },
             ]);
         });
         printer.drawLine();
         printer.tableCustom([
-            { text: "TAX BREAKDOWN", align: "LEFT", width: 0.5 },
+            { text: "GST", align: "LEFT", width: 0.5 },
             { text: "AMOUNT", align: "RIGHT", width: 0.5 },
         ]);
         taxGroup.forEach((element) => {
