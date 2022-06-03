@@ -22,15 +22,15 @@ function printReceipt(req) {
         if (el.inventory.gst_percent != 0) {
             if (taxGroup[index]) {
                 if (el.pivot.discount_amount != "") {
-                    taxGroup[index].total =
-                        (parseFloat(
-                            ((Number(el.inventory.selling_price) -
-                                Number(el.pivot.discount_amount)) *
-                                Number(el.inventory.gst_percent)) /
-                                100
-                        ) +
-                            parseFloat(taxGroup[index].total)) *
-                        parseFloat(el.pivot.quantity);
+                    const totalAfterDiscount =
+                        Number(el.inventory.selling_price) *
+                            Number(el.pivot.quantity) -
+                        Number(el.pivot.discount_amount);
+                    taxGroup[index].total +=
+                        parseFloat(
+                            totalAfterDiscount *
+                                Number(el.inventory.gst_percent)
+                        ) / 100;
                 } else {
                     taxGroup[index].total =
                         (parseFloat(
@@ -43,15 +43,17 @@ function printReceipt(req) {
                 }
             } else {
                 if (el.pivot.discount_amount != "") {
+                    const totalAfterDiscount =
+                        Number(el.inventory.selling_price) *
+                            Number(el.pivot.quantity) -
+                        Number(el.pivot.discount_amount);
                     taxGroup.push({
                         percent: el.inventory.gst_percent,
-                        total:
-                            parseFloat(
-                                ((Number(el.inventory.selling_price) -
-                                    Number(el.pivot.discount_amount)) *
-                                    Number(el.inventory.gst_percent)) /
-                                    100
-                            ) * parseFloat(el.pivot.quantity),
+                        total: parseFloat(
+                            (totalAfterDiscount *
+                                Number(el.inventory.gst_percent)) /
+                                100
+                        ),
                     });
                 } else {
                     taxGroup.push({
@@ -241,10 +243,7 @@ function printReceipt(req) {
                 {
                     text:
                         "(- Rs. " +
-                        (
-                            parseFloat(discount.amount) *
-                            parseFloat(discount.quantity)
-                        ).toFixed(2) +
+                        parseFloat(discount.amount).toFixed(2) +
                         ") " +
                         `Rs. ${parseFloat(data.total_without_gst).toFixed(2)}`,
                     align: "RIGHT",
