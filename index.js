@@ -88,7 +88,9 @@ function printReceipt(req) {
             { text: "PRICE", align: "LEFT", width: 0.25 },
             { text: "NETVALUE", align: "RIGHT", width: 0.25 },
         ]);
-        data.invoice.productList.forEach((element, i) => {
+        data.invoice[
+            data.invoice.productList ? "productList" : "product"
+        ].forEach((element, i) => {
             printer.tableCustom([
                 {
                     text: data.product_names[i],
@@ -120,7 +122,11 @@ function printReceipt(req) {
         printer.tableCustom([
             { text: "SUB TOTAL", align: "LEFT", width: 0.5 },
             {
-                text: "Rs. " + data.invoice.subTotal,
+                text:
+                    "Rs. " +
+                    data.invoice[
+                        data.invoice.subTotal ? "subTotal" : "subtotal"
+                    ],
                 align: "RIGHT",
                 width: 0.5,
             },
@@ -137,7 +143,11 @@ function printReceipt(req) {
         printer.tableCustom([
             { text: "TAX", align: "LEFT", width: 0.5 },
             {
-                text: "Rs. " + data.invoice.gstAmount,
+                text:
+                    "Rs. " +
+                    data.invoice[
+                        data.invoice.gstAmount ? "gstAmount" : "gst_amount"
+                    ],
                 align: "RIGHT",
                 width: 0.5,
             },
@@ -145,7 +155,11 @@ function printReceipt(req) {
         printer.tableCustom([
             { text: "TOTAL PAYABLE", align: "LEFT", width: 0.5 },
             {
-                text: "Rs. " + data.invoice.amountPayable,
+                text:
+                    "Rs. " +
+                    data.invoice[
+                        data.invoice.amountPayable ? "amountPayable" : "payable"
+                    ],
                 align: "RIGHT",
                 width: 0.5,
             },
